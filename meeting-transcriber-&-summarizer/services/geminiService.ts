@@ -1,10 +1,9 @@
 // Fix: The `LiveSession` type is no longer exported from `@google/genai`.
 import { GoogleGenAI, Modality, Blob } from '@google/genai';
 
-// FIX: Switched from `import.meta.env.VITE_GEMINI_API_KEY` to `process.env.API_KEY`
-// to align with the coding guidelines and resolve the TypeScript error. The guidelines
-// mandate using `process.env.API_KEY` for API key access.
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+// Fix: Corrected API key access to use process.env.API_KEY as required by the coding guidelines.
+// This also resolves the TypeScript error for `import.meta.env`.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const model = 'gemini-2.5-flash-native-audio-preview-09-2025';
 
 function encode(bytes: Uint8Array): string {
