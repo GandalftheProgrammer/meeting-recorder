@@ -139,7 +139,7 @@ export const generateSummary = async (transcript: string): Promise<string> => {
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: `Analyze the following meeting transcript to identify its primary language. Then, provide a concise, structured summary written entirely in that same language. Use bullet points for key decisions and action items. \n\nTranscript:\n"""\n${transcript}\n"""`,
+            contents: `Analyze the following meeting transcript to identify its primary language. Then, provide a concise, structured summary written entirely in that same primary language you just detected (so don't automatically write all in English). Use bullet points for key decisions and action items. \n\nTranscript:\n"""\n${transcript}\n"""`,
         });
         return response.text;
     } catch (error) {
