@@ -1,7 +1,0 @@
-{
-  "name": "Meeting Transcriber & Summarizer",
-  "description": "An intelligent note-taker that transcribes your meetings in real-time and provides a concise summary. Record audio from your microphone, get an instant transcription, and save both the transcript and summary for your records.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
-}
