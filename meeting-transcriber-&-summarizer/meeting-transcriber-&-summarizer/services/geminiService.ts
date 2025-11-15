@@ -136,11 +136,33 @@ export const generateSummary = async (transcript: string): Promise<string> => {
     if (!transcript || transcript.trim().length === 0) {
         return "No content provided for summary.";
     }
+
+    const prompt = `
+You will receive a meeting transcript in an unknown language.
+
+Your tasks:
+1. Detect the dominant language of the transcript.
+2. Write the summary **strictly in that same language**.
+3. Never use English unless the transcript itself is in English.
+4. Be extremely strict: even if the instructions are in English, the output MUST match the transcript language.
+5. Produce a concise, well structured summary.
+6. Include clear bullet points for:
+   - Key points
+   - Decisions
+   - Action items
+
+Transcript:
+"""
+${transcript}
+"""
+`;
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: `Analyze the following meeting transcript to identify its primary language. Then, provide a concise, structured summary written entirely in that same primary language you just detected (so don't automatically write all in English). Use bullet points for key decisions and action items. \n\nTranscript:\n"""\n${transcript}\n"""`,
+            contents: prompt,
         });
+
         return response.text;
     } catch (error) {
         console.error("Error generating summary:", error);
