@@ -137,19 +137,40 @@ export const generateSummary = async (transcript: string): Promise<string> => {
         return "No content provided for summary.";
     }
 
-    const prompt = `
-You will receive a meeting transcript in an unknown language.
+    try {
+        // 1. Detect language (korte, goedkope call)
+        const detectPrompt = `
+Detect the primary human language of the following text.
+Reply with ONLY the English name of that language, for example:
+"Dutch", "English", "German", "French", "Spanish".
+
+Text:
+"""
+${transcript}
+"""
+`;
+
+        const detectResponse = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: detectPrompt,
+        });
+
+        const targetLanguage = (detectResponse.text || "").trim();
+
+        // 2. Samenvatting in precies die taal
+        const summaryPrompt = `
+You are a meeting summarization assistant.
+
+The transcript is mainly in ${targetLanguage}.
 
 Your tasks:
-1. Detect the dominant language of the transcript.
-2. Write the summary **strictly in that same language**.
-3. Never use English unless the transcript itself is in English.
-4. Be extremely strict: even if the instructions are in English, the output MUST match the transcript language.
-5. Produce a concise, well structured summary.
-6. Include clear bullet points for:
+1. Summarize the transcript in clear, natural ${targetLanguage}.
+2. Do NOT translate to English or any other language. The summary MUST stay in ${targetLanguage}.
+3. Be concise and well-structured.
+4. Use bullet points for:
    - Key points
    - Decisions
-   - Action items
+   - Action items (with who does what by when, where possible).
 
 Transcript:
 """
@@ -157,13 +178,12 @@ ${transcript}
 """
 `;
 
-    try {
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
+        const summaryResponse = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: summaryPrompt,
         });
 
-        return response.text;
+        return summaryResponse.text;
     } catch (error) {
         console.error("Error generating summary:", error);
         throw new Error("Failed to connect with the summarization service.");
