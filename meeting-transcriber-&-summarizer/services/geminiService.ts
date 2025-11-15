@@ -3,7 +3,7 @@ import { GoogleGenAI, Modality, Blob } from '@google/genai';
 
 // Fix: Corrected API key access to use process.env.API_KEY as required by the coding guidelines.
 // This also resolves the TypeScript error for `import.meta.env`.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 const model = 'gemini-2.5-flash-native-audio-preview-09-2025';
 
 function encode(bytes: Uint8Array): string {
