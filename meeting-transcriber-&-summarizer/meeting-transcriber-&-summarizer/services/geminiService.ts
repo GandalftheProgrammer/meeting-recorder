@@ -1,10 +1,17 @@
+// Fix: Added a triple-slash directive to include Vite's client types. This resolves the TypeScript error for `import.meta.env`.
+/// <reference types="vite/client" />
+
 // Fix: The `LiveSession` type is no longer exported from `@google/genai`.
 import { GoogleGenAI, Modality, Blob } from '@google/genai';
 
-// FIX: Switched from `import.meta.env.VITE_GEMINI_API_KEY` to `process.env.API_KEY`
-// to align with the coding guidelines and resolve the TypeScript error. The guidelines
-// mandate using `process.env.API_KEY` for API key access.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// This is the CRUCIAL change for Netlify deployment.
+// It tells the app to look for the API key in the Netlify environment variables.
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("VITE_GEMINI_API_KEY environment variable not set");
+}
+const ai = new GoogleGenAI({ apiKey });
+
 const model = 'gemini-2.5-flash-native-audio-preview-09-2025';
 
 function encode(bytes: Uint8Array): string {
